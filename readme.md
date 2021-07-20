@@ -1,6 +1,6 @@
 # Yandex Radio Background Player Remote
 
-This is a basic html/js implementation of a remote controller for Yandex Radio Background Player.
+This is a basic html/js implementation of a remote controller for [Yandex Radio Background Player](https://github.com/ivanrussu/yandex_radio_background_player).
 
 ![Image of Yaktocat](./screenshot.jpg)
 

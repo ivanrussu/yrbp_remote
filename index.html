@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>YRBP Remote</title>
+    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"
+            integrity="sha384-LzhRnpGmQP+lOvWruF/lgkcqD+WDVt9fU3H4BWmwP5u5LTmkUGafMcpZKNObVMLU"
+            crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/33b298793a.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+    <link rel="stylesheet" href="style.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.0/color-thief.umd.js"></script>
+</head>
+<body>
+<!-- Inspired By this dribbble post https://dribbble.com/shots/2132841-Day-005-Music-Player-->
+
+
+    <div id="settings">
+        <div class="url">
+            <h1>Settings</h1>
+            <br>
+            <label>
+                URL <br>
+                <input id="urlText" type="text" value="http://localhost:3000"/>
+            </label>
+        </div>
+
+        <button id="btnSave" type="button" class="button-save">Save</button>
+
+    </div>
+
+    <div id="player" class="player d-none">
+        <div id="cog">
+            <i class="fas fa-cog"></i>
+        </div>
+        <div id="disconnected" class="disconnect">
+            <i class="fas fa-wifi"></i>
+        </div>
+        <div id="connected" class="d-none">
+            <div class="image"><img class="cover"
+                                    id="cover"
+                                    src="https://avatars.yandex.net/get-music-content/2397565/28ac5389.a.11023744-1/400x400"
+                                    alt="Cover"/>
+                <div class="filter"></div>
+            </div>
+            <div class="description">
+                <p id="artist"></p>
+                <h1 id="track"></h1>
+                <p id="album"></p>
+            </div>
+
+            <div class="time">
+                <p class="timePlayed" id="progress"></p>
+                <p class="timeLeft" id="length"></p>
+            </div>
+            <div class="lines">
+                <div class="songLength"></div>
+                <div class="lengthLeft"></div>
+            </div>
+            <div class="likeandfav">
+                <div class="state">
+                    <div id="play" class="fas fa-play d-none"></div>
+                    <div id="pause" class="fas fa-pause"></div>
+                </div>
+                <div class="forward">
+                    <div id="next" class="fas fa-fast-forward"></div>
+                </div>
+                <div class="fa fa-heart"></div>
+            </div>
+        </div>
+    </div>
+
+</body>
+<script>
+    let url = localStorage.getItem('url');
+
+    let settings = document.getElementById('settings');
+    let player = document.getElementById('player');
+    let cog = document.getElementById('cog');
+    let buttonSave = document.getElementById('btnSave');
+    let urlText = document.getElementById('urlText');
+
+    buttonSave.onclick = function () {
+        url = urlText.value;
+        localStorage.setItem('url', url);
+        start();
+    }
+
+    cog.onclick = function () {
+        settings.classList.remove('d-none')
+        player.classList.add('d-none');
+    }
+
+    if (url) {
+        start()
+    }
+
+    function start() {
+        settings.classList.add('d-none')
+        player.classList.remove('d-none');
+
+        let disconnected = document.getElementById('disconnected');
+        let connected = document.getElementById('connected');
+
+        const socket = io(url);
+
+        socket.on('connect', function () {
+            disconnected.classList.add('d-none');
+            connected.classList.remove('d-none');
+        })
+
+        socket.on('disconnect', function () {
+            connected.classList.add('d-none');
+            disconnected.classList.remove('d-none');
+        })
+
+        let play = document.getElementById('play');
+        let pause = document.getElementById('pause');
+        let next = document.getElementById('next');
+        let artist = document.getElementById('artist');
+        let album = document.getElementById('album');
+        let track = document.getElementById('track');
+        let cover = document.getElementById('cover');
+        let progress = document.getElementById('progress');
+        let length = document.getElementById('length');
+
+        let timer = null;
+
+        let makeProgress = (data) => {
+            let split = progress.innerText.split(':');
+            let minute = Number(split[0]);
+            let second = Number(split[1]);
+            if (second < 59) {
+                second += 1;
+            } else {
+                minute += 1;
+                second = 0;
+            }
+
+            let str = minute + ":";
+            if (second < 10) {
+                str += "0"
+            }
+            str += second;
+
+            progress.innerHTML = str;
+
+
+            let split_length = data.track.length.split(':');
+            let length_minute = Number(split_length[0]);
+            let length_second = Number(split_length[1]);
+
+            let percent_sec = (length_minute * 60 + length_second) / 100;
+            let progress_percent = (minute * 60 + second) / percent_sec;
+
+            let progress_px = progress_percent * 3.5
+            if (progress_percent >= 100) {
+                progress_px = 350;
+            }
+
+            document.querySelector('.lengthLeft').style.width = progress_px + 'px';
+
+            timer = setTimeout(() => makeProgress(data), 1000)
+
+            if (progress_percent >= 100) {
+                socket.emit('state');
+            }
+        }
+
+        socket.on('state', function (data) {
+            console.log('state', data)
+
+            if (data.is_playing === true) {
+                if (!play.classList.contains('d-none')) {
+                    play.classList.add('d-none');
+                    pause.classList.remove('d-none');
+                }
+            } else {
+                if (play.classList.contains('d-none')) {
+                    play.classList.remove('d-none');
+                    pause.classList.add('d-none');
+                }
+            }
+
+            artist.innerHTML = data.track.artist.name;
+            track.innerHTML = data.track.title;
+            album.innerHTML = data.track.album.title;
+
+            document.title = data.track.artist.name + ' – ' + data.track.title + ' | YRBP Remote'
+
+            cover.src = data.track.album.cover_url;
+
+            length.innerHTML = data.track.length;
+            progress.innerHTML = data.progress;
+
+            if (timer) {
+                clearTimeout(timer);
+            }
+
+            if (data.is_playing === true) {
+                makeProgress(data);
+            }
+        });
+
+        play.onclick = function () {
+            socket.emit('play');
+        };
+
+        pause.onclick = function () {
+            socket.emit('pause');
+        };
+
+        next.onclick = function () {
+            socket.emit('next');
+        };
+    }
+</script>
+</html>

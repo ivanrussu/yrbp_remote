@@ -1,0 +1,197 @@
+body {
+    background-color: #fe6182;
+    font-family: "Open Sans", sans-serif;
+    line-height: 1.15;
+}
+
+#settings {
+    height: 600px;
+    width: 450px;
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-225px);
+    background-color: #111;
+    box-shadow: 10px 10px 30px 0px rgba(0, 0, 0, 0.5), 0px 0px 40px 0px rgba(0, 0, 0, 0.4);
+}
+
+#settings .url {
+    position: absolute;
+    color: #fff;
+    top: 20px;
+    left: 50px;
+}
+
+#settings .button-save {
+    position: absolute;
+    top: 220px;
+    left: 50px;
+}
+
+.player {
+    height: 600px;
+    width: 450px;
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-225px);
+    background-color: #111;
+    box-shadow: 10px 10px 30px 0px rgba(0, 0, 0, 0.5), 0px 0px 40px 0px rgba(0, 0, 0, 0.4);
+}
+
+#cog {
+    position: absolute;
+    right: 40px;
+    top: 40px;
+    color: #666;
+    z-index: 9;
+}
+
+#cog:hover {
+    color: #9c9c9c;
+    cursor: pointer;
+}
+
+.player .disconnect {
+    position: absolute;
+    left: 195px;
+    top: 300px;
+    width: 450px;
+    font-size: 45px;
+    color: red;
+}
+
+.player .image {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+}
+
+.player .image .cover {
+    position: absolute;
+    width: 450px;
+    left: 0px;
+    top: 0px;
+}
+
+.player .image .filter {
+    position: absolute;
+    width: 450px;
+    height: 450px;
+    background: linear-gradient(transparent, #111);
+}
+
+.player .description {
+    position: absolute;
+    color: #fff;
+    font-family: Open Sans;
+    top: 350px;
+    left: 50px;
+}
+
+.player .description p {
+    margin: 0;
+    color: #666;
+}
+
+.player .description h1 {
+    margin: 5px 0px 0px 0px;
+}
+
+.player .buttons .playButton,
+.player .buttons .pauseButton {
+    position: absolute;
+    width: 20px;
+    transition: 0.2s;
+}
+
+.player .buttons .pauseButton {
+    opacity: 0;
+}
+
+.player .buttons.active .playButton {
+    opacity: 0;
+}
+
+.player .buttons.active .pauseButton {
+    opacity: 1;
+}
+
+.player .time {
+    position: absolute;
+    color: #fff;
+}
+
+.player .time .timePlayed {
+    position: absolute;
+    top: 450px;
+    left: 50px;
+}
+
+.player .time .timeLeft {
+    position: absolute;
+    top: 450px;
+    left: 370px;
+    color: #666;
+}
+
+.player .lines {
+    position: absolute;
+}
+
+.player .lines .songLength {
+    position: absolute;
+    width: 350px;
+    height: 1px;
+    background-color: #666;
+    top: 500px;
+    left: 50px;
+}
+
+.player .lines .lengthLeft {
+    position: absolute;
+    width: 0px;
+    height: 1px;
+    background-color: #fe5074;
+    top: 500px;
+    left: 50px;
+}
+
+.player .likeandfav {
+    position: absolute;
+    color: #666;
+}
+
+.player .likeandfav .state {
+    position: absolute;
+    top: 530px;
+    left: 50px;
+    font-size: 25px;
+    transition: 0.2s;
+}
+
+.player .likeandfav .forward {
+    position: absolute;
+    top: 530px;
+    left: 90px;
+    font-size: 25px;
+    transition: 0.2s;
+}
+
+.state:hover, .fa-heart:hover, .forward:hover {
+    color: #9c9c9c;
+    cursor: pointer;
+}
+
+.player .likeandfav .fa-heart {
+    display: none;
+    position: absolute;
+    top: 530px;
+    left: 375px;
+    font-size: 25px;
+    transition: 0.2s;
+}
+
+.d-none {
+    display: none;
+}
